@@ -39,7 +39,7 @@ function createProduct(data) {
             
             quantityIsSelect = false;
         }
-        disableButton(colorChoice, quantityIsSelect);
+        disableButton(colorChoice.value, quantityIsSelect);
     });
     colorChoice.addEventListener("input", function(event){
         disableButton(event.target.value, quantityIsSelect);

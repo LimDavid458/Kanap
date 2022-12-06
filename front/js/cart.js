@@ -3,7 +3,7 @@ const totalQuantity = document.getElementById("totalQuantity");
 const totalPrice = document.getElementById("totalPrice");
 const quantityCart = document.getElementsByClassName("itemQuantity"); 
 let cartItem = document.getElementsByClassName("cart__item"); 
-let cartDescription = document.getElementsByClassName("cart__item__content__description"); 
+let cartDescription = document.getElementsByClassName("cart__item__content__description");
 let endPrice = 0;
 let endQuantity = 0;
 
@@ -34,10 +34,26 @@ const createArticle = (dataStorage,dataApi) =>{
     cart.insertAdjacentHTML("beforeend",cardProduct);
     //sum price and quantity of all products
     total(dataApi.price,dataStorage.quantity);
-    document.addEventListener("input",function(event){
-        if(event.target.name === "itemQuantity"){
-            let newPrice = event.target.value * dataApi.price;
-            console.log(newPrice);
+    document.addEventListener("change",function(event){
+        let targetOfModifyQuantityById = event.target.closest("article").dataset.id;
+        let targetOfModifyQuantityByColor = event.target.closest("article").dataset.color;
+        let newPrice = 0;
+      
+        if(event.target.name === "itemQuantity"){ 
+            for( let i = 0; i < localStorage.length; i++){
+                if(cartItem[i].dataset.id === targetOfModifyQuantityById && cartItem[i].dataset.color === targetOfModifyQuantityByColor){
+                    console.log(cartDescription[i]);
+                    newPrice = parseInt(event.target.value) * dataApi.price;
+                    const changeContentDescription = `
+                        <h2>${dataApi.name}</h2>
+                        <p>${targetOfModifyQuantityByColor}</p>
+                        <p>${newPrice}€</p>
+                    `;
+                    cartDescription[i].innerHTML = changeContentDescription;
+                }
+                console.log
+            }
+        
         }
     });
 };

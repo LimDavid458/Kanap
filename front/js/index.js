@@ -1,6 +1,6 @@
 const container = document.querySelector("#items");
 
-const createCard = (data) =>{
+const createCards = (data) =>{
   for(let dataApi of data){
     const cardProduct = `
       <a href="./product.html?id=${dataApi._id}">
@@ -17,5 +17,5 @@ const createCard = (data) =>{
 
 fetch('http://localhost:3000/api/products')
   .then((response) => response.json())
-  .then((data) => createCard(data));
+  .then((data) => createCards(data));
   

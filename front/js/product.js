@@ -25,7 +25,7 @@ function createProduct(data) {
     //create option colors
     for(let color of data.colors){
         const createColorsChoice = `
-            <option value="${color}">${color}</option>
+            <option select="disabled" value="${color}">${color}</option>
         `;
         colorChoice.insertAdjacentHTML("beforeend", createColorsChoice);
     }

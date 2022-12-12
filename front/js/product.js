@@ -1,107 +1,99 @@
+import {getFromLocalStorage,localStorageHasKey,saveToLocalStorage} from "./storage.js"
+
 const searchParams = new URLSearchParams(window.location.search);
 const id = searchParams.get('id');
 const positionImg = document.querySelector(".item__img");
 const titleProduct = document.getElementById("title");
-const titlePageProduct = document.querySelector(" html head title")
+const titlePageProduct = document.querySelector("html head title")
 const priceProduct = document.getElementById("price");
 const colorChoice = document.getElementById("colors");
 const descriptionProduct = document.getElementById("description");
-const buttonDisabled =  document.getElementById("addToCart"); 
-const quantityOfProduct = document.getElementById("quantity"); 
-let quantityIsSelect = true;
-let objectValidation = true;
+const submitButton =  document.getElementById("addToCart");
+const quantityOfProduct = document.getElementById("quantity");
 
-function priceOfQuantityProduct(quantity,price){
-    return quantity * price;
-}
+let product, isQuantityValid = true, isColorValid;
 
-function createProduct(data) {
-    titleProduct.innerHTML = `${data.name}`;
-    titlePageProduct.innerHTML = `${data.name}`;
-    const createImg = `<img src="${data.imageUrl}" alt="${data.altTxt}">`;
-    positionImg.insertAdjacentHTML("beforeend",createImg);
-    descriptionProduct.innerHTML = `${data.description}`;
-    priceProduct.innerHTML = `${data.price}`;
-    //create option colors
-    for(let color of data.colors){
-        const createColorsChoice = `
-            <option select="disabled" value="${color}">${color}</option>
-        `;
+(function init() {
+    createProduct();
+    
+    // Calculate and show the price of the quantity of the product(1-100)
+    quantityOfProduct.addEventListener("change",function() {
+        const value = Number(quantityOfProduct.value);
+        
+        if(value > 0 && value < 101) {
+            isQuantityValid = true;
+            enableButton();
+        } else {
+            quantityOfProduct.value = 1;
+            alert('Merci de choisir une quantité comprise entre 1 et 100');
+        }
+    });
+    
+    // Confirms the color selection
+    colorChoice.addEventListener("change", function(event) {
+        if (colorChoice.value) {
+            isColorValid = true;
+            enableButton();
+        } else {
+            alert('Veuillez choisir une couleur valide de canapé');
+        }
+    });
+    
+    //
+    submitButton.addEventListener("click",function() {
+        const object = {
+            id: product._id,
+            quantity: Number(quantityOfProduct.value),
+            color: colorChoice.value,
+        };
+    
+        processLocalStorage(object);
+    });
+})();
+
+async function createProduct() {
+    product = await fetch(`http://localhost:3000/api/products/${id}`)
+        .then((response) => response.json())
+        .then((data) => { return data; });
+    
+    const createImg = `<img src="${product.imageUrl}" alt="${product.altTxt}" />`;
+    
+    titleProduct.innerHTML = `${product.name}`;
+    titlePageProduct.innerHTML = `${product.name}`;
+    positionImg.insertAdjacentHTML("beforeend", createImg);
+    descriptionProduct.innerHTML = `${product.description}`;
+    priceProduct.innerHTML = `${product.price}`;
+    
+    // Fill select with product colors
+    for (let color of product.colors) {
+        const createColorsChoice = `<option value="${color}">${color}</option>`; 
         colorChoice.insertAdjacentHTML("beforeend", createColorsChoice);
+        
     }
-    //calculate and show the price of the quantity of the product(1-100)
-    quantityOfProduct.addEventListener("input",function(event){
-        if(event.target.value >= 1 && event.target.value <= 100){
-            const price = priceOfQuantityProduct(event.target.value,data.price)
-            priceProduct.innerHTML = price;
-            quantityIsSelect = true;
-        }else{
-            
-            quantityIsSelect = false;
+}
+
+function processLocalStorage(object) {
+    const products = getFromLocalStorage();
+    // returns an object if the criteria are in the list.(else return undefined) 
+    const product = products.find(product => product.id === object.id && product.color === object.color);
+    
+    if (product) {
+        product.quantity = product.quantity + object.quantity;
+        
+        if (product.quantity > 100) {
+            product.quantity = 100;
+            alert('La quantité totale de cet article dépasse 100. Les articles en trop seront ignorés');
         }
-        disableButton(colorChoice.value, quantityIsSelect);
-    });
-    colorChoice.addEventListener("input", function(event){
-        disableButton(event.target.value, quantityIsSelect);
-    });
-    buttonDisabled.addEventListener("click",function(){
-        addObjectList(data._id,quantityOfProduct.value,colorChoice.value);
-    });
+    } else {
+        products.push(object);
+    }
+    
+    saveToLocalStorage(products);
 }
 
-function disableButton(color,quantity){
-    if(color !== "" && quantity){
-        buttonDisabled .disabled = false;
-    }else{
-        buttonDisabled .disabled = true;
+function enableButton() {
+    if (isQuantityValid && isColorValid) {
+        submitButton.disabled = false;
     }
 }
 
-function addObjectList(idProduct,quantityProduct,colorProduct){
-    const objectProduct = {
-        id:`${idProduct}`,
-        quantity:`${quantityProduct}`,
-        color:`${colorProduct}`
-    }
-    let objectString = JSON.stringify(objectProduct); 
-    let keyStorage = localStorage.length + 1;
-
-    if(localStorage.length === 0){
-        localStorage.setItem(`id:${keyStorage}`,objectString);
-    }else{
-        for( let i = 0; i < localStorage.length; i++){
-            let objectJson = objectInStorage(i+1);
-            if(objectJson.id == idProduct && objectJson.color === colorProduct){
-                objectJson.quantity = parseInt(objectJson.quantity) + parseInt(quantityProduct);
-                objectString = JSON.stringify(objectJson);
-                localStorage.setItem(`id:${i+1}`,objectString);
-                objectValidation = true;
-                break;
-            }else{
-                objectValidation = false;
-            }
-        }
-    }
-    addObjecInPanier(objectValidation,keyStorage,objectString); 
-}
-
-//convert string to object
-function objectInStorage(id){
-    let objectStorage = localStorage.getItem(`id:${id}`);
-    let objectJson = JSON.parse(objectStorage);
-    return objectJson;
-}
-
-function addObjecInPanier(validation,id,objectString){
-    if(validation === false){
-        localStorage.setItem(`id:${id}`,objectString);
-    }
-}
-
-fetch(`http://localhost:3000/api/products/${id}`)
-    .then((response) => response.json())
-    .then((data) => {
-        createProduct(data);
-    });
-
- 

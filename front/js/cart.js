@@ -113,7 +113,7 @@ function changeQuantity(id,color,quantity) {
 }
 
 async function changePrice(id,color,quantity) {
-   let compteur = 0, newPrice;
+   let index = 0, newPrice;
 
     for(let item of cart) {
         product =  await fetch(`http://localhost:3000/api/products/${item.id}`)
@@ -127,9 +127,9 @@ async function changePrice(id,color,quantity) {
                 <p>${color}</p>
                 <p>${newPrice}€</p>
             `;
-            cartDescription[compteur].innerHTML = newDescription;
+            cartDescription[index].innerHTML = newDescription;
         }
-        compteur++;
+        index++;
     }
 }
 

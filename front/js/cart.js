@@ -3,8 +3,29 @@ import { getFromLocalStorage,saveToLocalStorage } from "./storage.js"
 const cartItems = document.getElementById("cart__items");
 const totalQuantity = document.getElementById("totalQuantity");
 const totalPrice = document.getElementById("totalPrice");
+const inputFirstName = document.getElementById("firstName");
+const firstNameErrorMsg = document.getElementById("firstNameErrorMsg");
+const inputLastName = document.getElementById("lastName");
+const lastNameErrorMsg = document.getElementById("lastNameErrorMsg");
+const inputAddress = document.getElementById("address");
+const adressErrorMsg = document.getElementById("addressErrorMsg");
+const inputCity = document.getElementById("city");
+const cityErrorMsg = document.getElementById("cityErrorMsg");
+const inputEmail = document.getElementById("email");
+const emailErrorMsg = document.getElementById("emailErrorMsg");
+const order = document.getElementById("order");
 const cart = getFromLocalStorage();
-let products = [];
+let products = [],nameValid,emailValid,addressValid,cityValid;
+
+class Contact {
+    constructor(firstName,lastName,address,city,email) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.address = address;
+        this.city = city;
+        this.email = email;
+    }
+};
 
 (async function init() {
     await createArticles();
@@ -38,6 +59,38 @@ let products = [];
             getTotalProducts();
             getTotalPrice();
         });
+    });
+    
+    inputFirstName.addEventListener("input", function() {
+        valid(this,firstNameErrorMsg); 
+    });
+
+    inputLastName.addEventListener("input", function() {
+        valid(this,lastNameErrorMsg);
+    })
+
+    inputAddress.addEventListener("input", function() {
+        valid(this,adressErrorMsg);
+    })
+
+    inputCity.addEventListener("input", function() {
+        valid(this,cityErrorMsg);
+    })
+
+    inputEmail.addEventListener("input", function() {
+        valid(this,emailErrorMsg);
+    })
+
+    order.addEventListener("click", function(event){
+        if (nameValid && addressValid && cityValid && emailValid) {
+            event.preventDefault();
+            validOrder();
+            //location.href="confirmation.html";
+           
+        }else {
+            event.preventDefault();
+            alert("Attention, veuillez remplir correctement le formulaire");
+        }
     });
 })();
 
@@ -143,5 +196,63 @@ function removeItem(article) {
     saveToLocalStorage(cart);
 }
 
+function valid(input,errorMsg) {
+    const name = /^[A-Za-zçéï]+$/g;
+    const address = /^[\w\. é']+$/g;
+    const city  = /^[A-Za-z\- ]+$/g;
+    const email = /^[\w\.]+@{1}[a-z]+[.]{1}[a-z]{2,3}$/g;
+    
+    if ( input === inputFirstName ||input === inputLastName) {
+        if (!name.test(input.value)) {
+            errorMsg.innerHTML = "Le nom doit comporter seulement des lettres.";
+            nameValid = false;
+        } else {
+            errorMsg.innerHTML = "";
+            nameValid = true;
+        }
 
+    } else if (input === inputAddress) {
+        if(!address.test(input.value)) {
+            errorMsg.innerHTML = "L'adresse est incorrecte";
+            addressValid = false;
+        } else {
+            errorMsg.innerHTML = "";
+            addressValid = true;
+        }
+
+    } else if (input === inputCity) {
+        if(!city.test(input.value)) {
+            errorMsg.innerHTML = "Le nom de la ville est incorrecte";
+            cityValid = false;
+        } else {
+            errorMsg.innerHTML = "";
+            cityValid = true;
+        }
+
+    } else {
+        if(!email.test(input.value)) {
+            errorMsg.innerHTML = "L'email est incorrecte ";
+            emailValid = false;
+        } else {
+            errorMsg.innerHTML = "";
+            emailValid = true;
+        }
+    }
+}
+
+async function validOrder() {
+    const contact = new Contact(inputFirstName.value,inputLastName.value,inputAddress.value,inputCity.value,inputEmail.value);
+
+    fetch("http://localhost:3000/api/products/order",{
+        method:'POST',
+        headers:{
+            'Accept': 'application/json', 
+            'Content-Type': 'application/json' 
+        },
+        body: JSON.stringify(contact)
+    })
+    .then((response) => response.json())
+    .then((data) => console.log(data))
+    
+}
 

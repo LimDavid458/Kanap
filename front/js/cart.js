@@ -1,4 +1,4 @@
-import { getFromLocalStorage,saveToLocalStorage } from "./storage.js"
+import { getFromLocalStorage,saveToLocalStorage } from "./storage.js";
 
 const cartItems = document.getElementById("cart__items");
 const totalQuantity = document.getElementById("totalQuantity");
@@ -15,17 +15,7 @@ const inputEmail = document.getElementById("email");
 const emailErrorMsg = document.getElementById("emailErrorMsg");
 const order = document.getElementById("order");
 const cart = getFromLocalStorage();
-let products = [],nameValid,emailValid,addressValid,cityValid;
-
-class Contact {
-    constructor(firstName,lastName,address,city,email) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.address = address;
-        this.city = city;
-        this.email = email;
-    }
-};
+let products = [], nameValid, emailValid, addressValid, cityValid;
 
 (async function init() {
     await createArticles();
@@ -84,11 +74,11 @@ class Contact {
     order.addEventListener("click", function(event){
         if (nameValid && addressValid && cityValid && emailValid) {
             event.preventDefault();
+
             validOrder();
-            //location.href="confirmation.html";
-           
         }else {
             event.preventDefault();
+
             alert("Attention, veuillez remplir correctement le formulaire");
         }
     });
@@ -240,19 +230,29 @@ function valid(input,errorMsg) {
     }
 }
 
-async function validOrder() {
-    const contact = new Contact(inputFirstName.value,inputLastName.value,inputAddress.value,inputCity.value,inputEmail.value);
-
-    fetch("http://localhost:3000/api/products/order",{
-        method:'POST',
-        headers:{
-            'Accept': 'application/json', 
-            'Content-Type': 'application/json' 
+function validOrder() {
+    const body = {
+        contact: {
+            firstName: inputFirstName.value,
+            lastName: inputLastName.value,
+            address: inputAddress.value,
+            city: inputCity.value,
+            email: inputEmail.value
         },
-        body: JSON.stringify(contact)
+        products: products.map(product => product._id)
+    };
+
+    fetch('http://localhost:3000/api/products/order', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body),
     })
-    .then((response) => response.json())
-    .then((data) => console.log(data))
-    
+        .then(res => res.json())
+        .then(data => {
+            window.location.href = "confirmation.html?orderId=" + data.orderId;
+            localStorage.clear();
+        });
 }
 

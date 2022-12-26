@@ -98,7 +98,7 @@ async function createArticles() {
                     <div class="cart__item__content__description">
                         <h2>${products[i].name}</h2>
                         <p>${object.color}</p>
-                        <p>${products[i].price * object.quantity}€</p>
+                        <p>${products[i].price}€</p>
                     </div>
                     <div class="cart__item__content__settings">
                         <div class="cart__item__content__settings__quantity">

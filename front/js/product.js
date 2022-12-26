@@ -39,7 +39,7 @@ let product, isQuantityValid = true, isColorValid;
         }
     });
     
-    //
+    //Save data (id,quantity and color) in local Storage
     submitButton.addEventListener("click",function() {
         const object = {
             id: product._id,

@@ -8,6 +8,7 @@ export function localStorageHasKey() {
     return !!localStorage.getItem('cart');
 }
 
+//Save data in local Storage
 export function saveToLocalStorage(products) {
     localStorage.setItem('cart', JSON.stringify(products));
 }

@@ -26,6 +26,7 @@ let products = [], nameValid, emailValid, addressValid, cityValid;
     const inputsQuantity = document.querySelectorAll('.itemQuantity');
     const inputsDeleteItem = document.querySelectorAll('.deleteItem');
 
+    //change quantity of product in the cart
     inputsQuantity.forEach(input => {
         input.addEventListener("change", function() {
             const article = input.closest("article");

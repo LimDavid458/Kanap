@@ -17,6 +17,7 @@ const order = document.getElementById("order");
 const cart = getFromLocalStorage();
 let products = [], nameValid, emailValid, addressValid, cityValid;
 
+/** Function calling itself */
 (async function init() {
     await createArticles();
 
@@ -26,7 +27,7 @@ let products = [], nameValid, emailValid, addressValid, cityValid;
     const inputsQuantity = document.querySelectorAll('.itemQuantity');
     const inputsDeleteItem = document.querySelectorAll('.deleteItem');
 
-    //change quantity of product in the cart
+    // Change quantity of product in the cart
     inputsQuantity.forEach(input => {
         input.addEventListener("change", function() {
             const article = input.closest("article");
@@ -85,6 +86,7 @@ let products = [], nameValid, emailValid, addressValid, cityValid;
     });
 })();
 
+/** Create the product items for the user to add */
 async function createArticles() {
   
     await getObjectFromLocalStorage();
@@ -118,6 +120,7 @@ async function createArticles() {
     });
 }
 
+/** Create array of object from api */
 async function getObjectFromLocalStorage() {
     // On crée une variable contenant tous les ids stockés dans le localStorage
     const ids = cart.map(x => x.id);
@@ -130,6 +133,7 @@ async function getObjectFromLocalStorage() {
     );
 }
 
+/** Sum total of product*/
 function getTotalProducts() {
     let number = 0;
 
@@ -140,6 +144,7 @@ function getTotalProducts() {
     totalQuantity.innerHTML = `${number}`;
 }
 
+/** Sum total of price */
 function getTotalPrice() {
     let price = 0;
 
@@ -150,6 +155,13 @@ function getTotalPrice() {
     totalPrice.innerHTML = `${price}`;
 }
 
+/**
+ * Change quantity of the product
+ * @param {string} id  - The id of the chosen product
+ * @param {string} color - The color of the chosen product
+ * @param {number} quantity - The quantity of the product changed
+ * @returns {number} - Returns the quantity of the corresponding product
+ */
 function changeQuantity(id,color,quantity) {
     let foundObject = cart.find(product => product.id === id && product.color === color);
     
@@ -172,6 +184,7 @@ function changeQuantity(id,color,quantity) {
     }
 }
 
+/** Remove item*/
 function removeItem(article) {
     const itemId = article.dataset.id;
     const itemColor = article.dataset.color;
@@ -187,6 +200,11 @@ function removeItem(article) {
     saveToLocalStorage(cart);
 }
 
+/**
+ * User data verification system 
+ * @param {Object} input 
+ * @param {Object} errorMsg 
+ */
 function valid(input,errorMsg) {
     const name = /^[A-Za-zçéï]+$/g;
     const address = /^[\w\. é']+$/g;
@@ -231,6 +249,7 @@ function valid(input,errorMsg) {
     }
 }
 
+/** Sending from data  */
 function validOrder() {
     const body = {
         contact: {

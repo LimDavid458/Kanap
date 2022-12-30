@@ -13,6 +13,7 @@ const quantityOfProduct = document.getElementById("quantity");
 
 let product, isQuantityValid = true, isColorValid;
 
+/** Function calling itself */
 (function init() {
     createProduct();
     
@@ -39,7 +40,7 @@ let product, isQuantityValid = true, isColorValid;
         }
     });
     
-    //Save data (id,quantity and color) in local Storage
+    // Save data (id,quantity and color) in local Storage
     submitButton.addEventListener("click",function() {
         const object = {
             id: product._id,
@@ -51,6 +52,7 @@ let product, isQuantityValid = true, isColorValid;
     });
 })();
 
+/** Create description of product */
 async function createProduct() {
     product = await fetch(`http://localhost:3000/api/products/${id}`)
         .then((response) => response.json())
@@ -72,6 +74,10 @@ async function createProduct() {
     }
 }
 
+/**
+ * Add the product if it is not present in the local storage otherwise add the quantity of the product
+ * @param {Object} object 
+ */
 function processLocalStorage(object) {
     const products = getFromLocalStorage();
     // returns an object if the criteria are in the list.(else return undefined) 
@@ -91,6 +97,7 @@ function processLocalStorage(object) {
     saveToLocalStorage(products);
 }
 
+/** Enable button */
 function enableButton() {
     if (isQuantityValid && isColorValid) {
         submitButton.disabled = false;

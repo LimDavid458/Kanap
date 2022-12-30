@@ -1,5 +1,9 @@
 const container = document.querySelector("#items");
 
+/**
+ * Create card product 
+ * @param {Object} data - object from api
+ */
 const createCards = (data) =>{
   for(let dataApi of data){
     const cardProduct = `

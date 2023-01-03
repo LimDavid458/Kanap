@@ -76,7 +76,7 @@ async function createProduct() {
 
 /**
  * Add the product if it is not present in the local storage otherwise add the quantity of the product
- * @param {Object} object 
+ * @param {Object} object - Object that comes from the product page
  */
 function processLocalStorage(object) {
     const products = getFromLocalStorage();

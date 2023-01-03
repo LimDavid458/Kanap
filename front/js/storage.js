@@ -10,7 +10,7 @@ export function getFromLocalStorage () {
 
 /**
  * Check the presence of the "cart" key in the storage room.
- * @returns {boolean}
+ * @returns {Boolean}
  */
 export function localStorageHasKey() {
     return !!localStorage.getItem('cart');
@@ -18,7 +18,7 @@ export function localStorageHasKey() {
 
 /**
  * Save data in local Storage
- * @param {Object} products 
+ * @param {Object} products - New object to add in local storage 
  */
 export function saveToLocalStorage(products) {
     localStorage.setItem('cart', JSON.stringify(products));

@@ -71,16 +71,15 @@ let products = [], nameValid, emailValid, addressValid, cityValid;
 
     inputEmail.addEventListener("input", function() {
         valid(this,emailErrorMsg);
+
     })
-
-    order.addEventListener("click", function(event){
+    
+    order.addEventListener("click", (event) => {
+        event.preventDefault();
+        
         if (nameValid && addressValid && cityValid && emailValid) {
-            event.preventDefault();
-
             validOrder();
         }else {
-            event.preventDefault();
-
             alert("Attention, veuillez remplir correctement le formulaire");
         }
     });
@@ -157,10 +156,10 @@ function getTotalPrice() {
 
 /**
  * Change quantity of the product
- * @param {string} id  - The id of the chosen product
- * @param {string} color - The color of the chosen product
- * @param {number} quantity - The quantity of the product changed
- * @returns {number} - Returns the quantity of the corresponding product
+ * @param {String} id  - The id of the chosen product
+ * @param {String} color - The color of the chosen product
+ * @param {Number} quantity - The quantity of the product changed
+ * @returns {Number} - Returns the quantity of the corresponding product
  */
 function changeQuantity(id,color,quantity) {
     let foundObject = cart.find(product => product.id === id && product.color === color);
@@ -202,8 +201,8 @@ function removeItem(article) {
 
 /**
  * User data verification system 
- * @param {Object} input 
- * @param {Object} errorMsg 
+ * @param {Object} input - The value entered by the user
+ * @param {Object} errorMsg - The position of the error in the form
  */
 function valid(input,errorMsg) {
     const name = /^[A-Za-zçéï]+$/g;

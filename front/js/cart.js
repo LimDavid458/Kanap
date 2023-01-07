@@ -88,7 +88,7 @@ let products = [], nameValid, emailValid, addressValid, cityValid;
 /** Create the product items for the user to add */
 async function createArticles() {
   
-    await getObjectFromLocalStorage();
+    await getObjectFromApi();
 
     cart.forEach((object, i) =>  {
         const cardProduct = `
@@ -120,7 +120,7 @@ async function createArticles() {
 }
 
 /** Create array of object from api */
-async function getObjectFromLocalStorage() {
+async function getObjectFromApi() {
     // On crée une variable contenant tous les ids stockés dans le localStorage
     const ids = cart.map(x => x.id);
     

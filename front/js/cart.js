@@ -15,10 +15,11 @@ const inputEmail = document.getElementById("email");
 const emailErrorMsg = document.getElementById("emailErrorMsg");
 const order = document.getElementById("order");
 const cart = getFromLocalStorage();
-let products = [], nameValid, emailValid, addressValid, cityValid;
+let products = [], nameValid, emailValid, addressValid, cityValid, quantityValid;
 
 /** Function calling itself */
 (async function init() {
+    quantityIsPresent();
     await createArticles();
 
     getTotalProducts();
@@ -77,10 +78,10 @@ let products = [], nameValid, emailValid, addressValid, cityValid;
     order.addEventListener("click", (event) => {
         event.preventDefault();
         
-        if (nameValid && addressValid && cityValid && emailValid) {
+        if (nameValid && addressValid && cityValid && emailValid && quantityValid) {
             validOrder();
         }else {
-            alert("Attention, veuillez remplir correctement le formulaire");
+            alert("Attention, merci de bien remplir le formulaire ou de vérifier le nombre d'articles dans le panier.");
         }
     });
 })();
@@ -195,6 +196,7 @@ function removeItem(article) {
     products.splice(index, 1);
 
     article.remove();
+    quantityIsPresent()
 
     saveToLocalStorage(cart);
 }
@@ -245,6 +247,14 @@ function valid(input,errorMsg) {
             errorMsg.innerHTML = "";
             emailValid = true;
         }
+    }
+}
+
+function quantityIsPresent (){
+    if (cart.length === 0) {
+        quantityValid = false;
+    }else {
+        quantityValid = true;
     }
 }
 
